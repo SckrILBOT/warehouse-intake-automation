@@ -16,3 +16,18 @@ export const documents = sqliteTable('documents', {
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 }, table => [index('documents_owner_updated').on(table.owner, table.updatedAt)]);
+export const authState = sqliteTable('auth_state', {
+  id: integer('id').primaryKey(),
+  keyHash: text('key_hash').notNull(),
+  version: integer('version').notNull().default(1),
+});
+export const authSessions = sqliteTable('auth_sessions', {
+  tokenHash: text('token_hash').primaryKey(),
+  version: integer('version').notNull(),
+  expiresAt: integer('expires_at').notNull(),
+});
+export const authAttempts = sqliteTable('auth_attempts', {
+  id: text('id').primaryKey(),
+  attempts: integer('attempts').notNull(),
+  startedAt: integer('started_at').notNull(),
+});

@@ -4,5 +4,6 @@ declare namespace Cloudflare {
     BUCKET?: R2Bucket;
     YANDEX_API_KEY?: string;
     YANDEX_FOLDER_ID?: string;
+    OWNER_ACCESS_KEY_HASH?: string;
   }
 }

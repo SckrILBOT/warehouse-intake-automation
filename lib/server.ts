@@ -1,11 +1,11 @@
 import { env } from 'cloudflare:workers';
-import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { session } from './auth';
 export class ApiError extends Error { constructor(public status: number, message: string) { super(message); } }
 export async function identity(request: Request, write = false) {
-  const user = await getChatGPTUser();
+  const user = await session();
   if (!user) throw new ApiError(401, 'Войди в аккаунт, чтобы открыть документы');
   if (write && request.headers.get('origin') !== new URL(request.url).origin) throw new ApiError(403, 'Открой приложение заново и повтори действие');
-  return user.userId;
+  return user.owner;
 }
 export function resources() {
   if (!env.DB || !env.BUCKET) throw new ApiError(503, 'Хранилище ещё не подключено');

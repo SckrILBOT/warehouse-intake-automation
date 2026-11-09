@@ -11,6 +11,8 @@ export const documents = sqliteTable('documents', {
   status: text('status').notNull().default('uploaded'),
   draft: text('draft'),
   evidence: text('evidence'),
+  recognitionProgress: text('recognition_progress'),
+  deletedAt: text('deleted_at'),
   error: text('error'),
   version: integer('version').notNull().default(0),
   createdAt: text('created_at').notNull(),
@@ -30,4 +32,11 @@ export const authAttempts = sqliteTable('auth_attempts', {
   id: text('id').primaryKey(),
   attempts: integer('attempts').notNull(),
   startedAt: integer('started_at').notNull(),
+});
+export const cloudJobs = sqliteTable('cloud_jobs', {
+  id: text('id').primaryKey(), owner: text('owner').notNull(), documentId: text('document_id').notNull(),
+  documentVersion: integer('document_version').notNull(), target: text('target').notNull(),
+  state: text('state').notNull(), beforeHash: text('before_hash').notNull(), afterHash: text('after_hash').notNull(),
+  backupKey: text('backup_key').notNull(), resultKey: text('result_key').notNull(), plan: text('plan').notNull(),
+  createdAt: text('created_at').notNull(), updatedAt: text('updated_at').notNull(),
 });

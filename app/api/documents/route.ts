@@ -2,7 +2,8 @@ import { identity, resources, json, failure, publicDocument, type DocumentRow, A
 export async function GET(request: Request) {
   try {
     const owner = await identity(request), { db } = resources();
-    const rows = await db.prepare('SELECT id, filename, status, draft, error, version, created_at, updated_at FROM documents WHERE owner = ? ORDER BY updated_at DESC LIMIT 50').bind(owner).all<DocumentRow>();
+    const trash=new URL(request.url).searchParams.get('trash')==='1';
+    const rows = await db.prepare(`SELECT id, filename, status, draft, recognition_progress, deleted_at, error, version, created_at, updated_at FROM documents WHERE owner = ? AND deleted_at IS ${trash?'NOT ':''}NULL ORDER BY ${trash?'deleted_at':'updated_at'} DESC LIMIT 50`).bind(owner).all<DocumentRow>();
     return json(rows.results.map(publicDocument));
   } catch (e) { return failure(e); }
 }

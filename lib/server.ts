@@ -17,11 +17,11 @@ export function failure(error: unknown) {
   console.error('Request failed:', error instanceof Error ? error.name : 'Unknown error');
   return json({ error: 'Не удалось выполнить действие. Твои сохранённые данные остаются в истории.' }, 500);
 }
-export type DocumentRow = { id: string; owner: string; filename: string; mime: string; image_key: string; status: string; draft: string | null; evidence: string | null; error: string | null; version: number; created_at: string; updated_at: string };
+export type DocumentRow = { id: string; owner: string; filename: string; mime: string; image_key: string; status: string; draft: string | null; evidence: string | null; recognition_progress:string|null; deleted_at:string|null; error: string | null; version: number; created_at: string; updated_at: string };
 export async function owned(id: string, owner: string): Promise<DocumentRow> {
   const { db } = resources();
-  const row = await db.prepare('SELECT * FROM documents WHERE id = ? AND owner = ?').bind(id, owner).first<DocumentRow>();
+  const row = await db.prepare('SELECT * FROM documents WHERE id = ? AND owner = ? AND deleted_at IS NULL').bind(id, owner).first<DocumentRow>();
   if (!row) throw new ApiError(404, 'Документ не найден');
   return row;
 }
-export function publicDocument(row: DocumentRow) { return { id: row.id, filename: row.filename, status: row.status, draft: row.draft ? JSON.parse(row.draft) : null, error: row.error, version: row.version, createdAt: row.created_at, updatedAt: row.updated_at }; }
+export function publicDocument(row: DocumentRow) { return { id: row.id, filename: row.filename, status: row.status, draft: row.draft ? JSON.parse(row.draft) : null, progress:row.recognition_progress?JSON.parse(row.recognition_progress):null,deletedAt:row.deleted_at,error: row.error, version: row.version, createdAt: row.created_at, updatedAt: row.updated_at }; }

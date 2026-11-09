@@ -18,4 +18,12 @@ for(const file of new Set(files)){
 mkdirSync(join(output,'.openai'),{recursive:true});
 writeFileSync(join(output,'.openai','hosting.json'),JSON.stringify({d1:'DB',r2:'BUCKET'},null,2)+'\n');
 writeFileSync(join(output,'.env.example'),readFileSync(join(root,'.env.example')));
+// A public checkout must not reveal the owner's real warehouse directory.
+// Keep code, the fixture and the example configuration consistent.
+const privateWorkPath=readFileSync(join(root,'lib/cloud-mail.ts'),'utf8').match(/export const WORK_PATH='([^']+)'/)?.[1];
+if(!privateWorkPath)throw new Error('Cannot identify the work path for sanitization');
+for(const file of ['lib/cloud-mail.ts','tests/cloud-mail.test.ts','.env.example']){
+  const destination=join(output,file);
+  writeFileSync(destination,readFileSync(destination,'utf8').replaceAll(privateWorkPath,'/Warehouse/Stock.xlsx'));
+}
 console.log(output);
